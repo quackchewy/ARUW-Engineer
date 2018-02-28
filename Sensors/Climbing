@@ -1,0 +1,125 @@
+//include an interrupt climbing process with climbing = false
+#define irFL A0
+#define irFR A1
+#define irBL A2
+#define irBR A3
+//Distance reading for each sonic sensor
+int distanceFL;
+int distanceFR;
+int distanceBL;
+int distanceBR;
+//Input button to start climbing process
+const int buttonUp = 2;
+const int buttonDown = 3;
+bool climbing = false;
+void setup() {
+  Serial.begin(9600);
+  pinMode(echoPinFL, INPUT);
+  pinMode(trigPinFL, OUTPUT);
+  
+  pinMode(echoPinFR, INPUT);
+  pinMode(trigPinFR, OUTPUT);
+  
+  pinMode(echoPinBL, INPUT);
+  pinMode(trigPinBL, OUTPUT);
+  
+  pinMode(echoPinBR, INPUT);
+  pinMode(trigPinBR, OUTPUT);
+  
+  pinMode(buttonUp, INPUT);
+  pinMode(buttonDown, INPUT);
+}
+void loop() {
+  //If the button is pressed and has not been previously pressed, start climbing process
+  if (digitalRead(buttonUp) == HIGH && !climbing) {
+    climbing = true;
+    climbUp();
+  } else if (digitalRead(buttonDown) == HIGH && !climbing) {
+    climbing = true;
+    climbDown();
+  }
+}
+//WHERE ARE SENSORS LOCATED???? --> 5cm above wheels
+//The distance from the sensor to the bottom of the wheels
+int climbHeight = 15; 
+void climbUp() {
+  //Initial movement forward
+  while (readFL() > climbHeight || readFR() > climbHeight) {
+    //ADD Drive robot forward
+  }
+  
+  //Fine tune the left side
+  while (readFL() > climbHeight) {
+    //ADD Move left side of robot forward
+  }
+  //Fine tune the right side
+  while (readFR() > climbHeight) {
+    //ADD Move right side of robot forward
+  }
+  
+  //ADD Lower all four wheels
+  while (readBL() > climbHeight || readBR() > climbHeight) {
+    //ADD Drive robot forward
+  }
+  /* WILL NOT BE NEEDED IF THE ROBOT IS STRAIGHT ALREADY
+  //Fine tune the left side
+  while (readBL() > climbHeight) {
+    //ADD Move left side of robot forward
+  }
+  //Fine tune the right side
+  while (readBR() > climbHeight) {
+    //ADD Move right side of robot forward
+  }
+  */
+  //ADD Raise back wheels
+  //ADD Drive forward onto step
+  climbing = false;
+}
+void climbDown() {
+  //Initial movement forward
+  while (readBL() < climbHeight || readBR() < climbHeight) {
+    //ADD Drive robot backward
+  }
+  
+  //Fine tune the left side
+  while (readBL() < climbHeight) {
+    //ADD Move left side of robot backward
+  }
+  //Fine tune the right side
+  while (readBR() < climbHeight) {
+    //ADD Move right side of robot backward
+  }
+  
+  //ADD Lower the back wheels
+  while (readFL() < climbHeight + 20 || readFR() < climbHeight + 20) {
+    //ADD Move robot backward
+  }
+  //ADD Raise all four wheels
+  //ADD Drive off platform
+  climbing = false;
+}
+//Read front left IR sensor
+int readFL() {
+ float volts = analogRead(irFL) * 0.0048828125;
+ distanceFL = 13 * pow(volts, -1); //in centimeters
+ delay(50);
+}
+//Read front right IR sensor
+int readFR() {
+ float volts = analogRead(irFR) * 0.0048828125;
+ distanceFR = 13 * pow(volts, -1); //in centimeters
+ delay(50);
+}
+//Read back left IR sensor
+int readBL() {
+ float volts = analogRead(irBL) * 0.0048828125;
+ distanceBL = 13 * pow(volts, -1); //in centimeters
+ delay(50);
+}
+  
+//Read back right IR sensor
+int readBR() {
+ float volts = analogRead(irBR) * 0.0048828125;
+ distanceBR = 13 * pow(volts, -1); //in centimeters
+ delay(50);
+}
